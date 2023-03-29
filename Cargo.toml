@@ -1,15 +1,2 @@
-[package]
-name = "easy-jni"
-version = "0.2.0"
-authors = ["XOR·APPS <developers@xorapps.network>"]
-edition = "2021"
-description = "Making Rust JNI calls easy"
-license = "Apache-2.0 OR MIT"
-repository = "https://github.com/xorapps/EasyJNI"
-homepage = "https://xorapps.network/libs/EasyJNI"
-
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-jni = { git = "https://github.com/xorapps/jni-rs", features = ["invocation"] }
+[workspace]
+members = ["crate", "tests"]
