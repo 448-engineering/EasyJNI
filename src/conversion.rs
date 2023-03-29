@@ -5,16 +5,13 @@ use jni::{
     JNIEnv,
 };
 
-pub fn to_rust<'local>(
+pub fn to_rust<'local, O>(
     env: &mut JNIEnv<'local>,
     // Static class which owns this method.
     _class: &JClass<'local>,
-    // The string which must be sorted
-    input: &JObject,
+    input: JValue,
 ) -> EasyJNIResult<JavaType> {
-    let java_value = JValue::from(input);
-
-    let outcome = match java_value {
+    let outcome = match input {
         JValueGen::Byte(value) => {
             if value < 0 {
                 return Err(crate::EasyJniError::ByteLessThanZeroNotSupported);
