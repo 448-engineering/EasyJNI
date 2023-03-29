@@ -1,0 +1,16 @@
+[package]
+name = "rust-kotlin"
+version = "0.1.0"
+authors = ["XOR·APPS <developers@xorapps.network>"]
+license = "CC0-1.0"
+description = "How to compile Rust shared library and execute with Kotlin"
+publish = false
+edition = "2021"
+
+[lib]
+name = "rust_kotlin"
+crate-type = ["cdylib"]
+
+[dependencies]
+jni = { git = "https://github.com/xorapps/jni-rs" }
+easy-jni = { path = "../crate" }
