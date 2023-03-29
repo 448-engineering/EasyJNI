@@ -5,7 +5,7 @@ use jni::{
     JNIEnv,
 };
 
-pub fn to_rust<'local, 'obj_ref, T>(
+pub fn to_rust<'local>(
     env: &mut JNIEnv<'local>,
     // Static class which owns this method.
     _class: &JClass<'local>,
