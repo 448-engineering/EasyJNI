@@ -2,6 +2,7 @@ use jni::errors::Error as JniError;
 
 pub type EasyJNIResult<T> = Result<T, EasyJniError>;
 
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum EasyJniError {
     ArrayOfVoidNotAllowed,
     UnsupportedJavaType,
