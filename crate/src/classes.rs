@@ -1,6 +1,6 @@
 use crate::{EasyJNIResult, EasyJniError};
 use jni::{
-    objects::{JClass, JObject, JValueOwned},
+    objects::{JClass, JObject, JString, JValueOwned},
     strings::JNIString,
     sys::{jarray, jint, jsize},
     JNIEnv,
@@ -38,6 +38,24 @@ impl Default for JavaType {
 }
 
 impl<'local> JavaType {
+    pub fn new_string(
+        env: &JNIEnv<'local>,
+        _: &JClass<'local>,
+        value: &str,
+    ) -> EasyJNIResult<JString<'local>> {
+        Ok(env.new_string(&value)?)
+    }
+
+    pub fn new_jvalue_string(
+        env: &JNIEnv<'local>,
+        _: &JClass<'local>,
+        value: &str,
+    ) -> EasyJNIResult<JValueOwned<'local>> {
+        let string = env.new_string(&value)?;
+
+        Ok(JValueOwned::from(JString::from(string)))
+    }
+
     pub fn to_jni_jvalue(
         &self,
         env: &JNIEnv<'local>,
@@ -60,8 +78,8 @@ impl<'local> JavaType {
     }
 
     pub fn to_jni_object(
-        &self,
-        env: &JNIEnv<'local>,
+        &'local self,
+        env: &mut JNIEnv<'local>,
         java_class: &JClass<'local>,
     ) -> EasyJNIResult<JObject<'local>> {
         let class = self.java_class(env, java_class)?;
@@ -105,7 +123,7 @@ impl<'local> JavaType {
 
     pub fn java_class(
         &'local self,
-        env: &JNIEnv<'local>,
+        env: &mut JNIEnv<'local>,
         _: &JClass<'local>,
     ) -> EasyJNIResult<JClass> {
         // Get a reference to the Integer class
@@ -135,13 +153,17 @@ impl<'local> JavaArray {
         self
     }
 
-    pub fn create(self, env: &JNIEnv<'local>, java_class: JClass<'local>) -> EasyJNIResult<jarray> {
-        let class = self.java_type.java_class(&env, &java_class)?;
+    pub fn create(
+        &'local self,
+        env: &mut JNIEnv<'local>,
+        java_class: JClass<'local>,
+    ) -> EasyJNIResult<jarray> {
+        let class = self.java_type.java_class(env, &java_class)?;
 
         let jarray = env.new_object_array(self.size as jsize, class, JObject::null())?;
 
         for (i, s) in self.values.iter().enumerate() {
-            let object = s.to_jni_object(&env, &java_class)?;
+            let object = s.to_jni_object(env, &java_class)?;
 
             env.set_object_array_element(&jarray, i as jint, object)?;
         }

@@ -6,13 +6,13 @@ use jni::{
 
 #[no_mangle]
 pub extern "system" fn Java_RustLibrary_nativeAssertions<'local>(
-    env: &mut JNIEnv<'local>,
+    mut env: JNIEnv<'local>,
     java_class: &JClass<'local>,
 ) {
     {
         let byte_data = 4i8;
 
-        let outcome = to_rust(env, java_class, JValue::from(byte_data));
+        let outcome = to_rust(&mut env, java_class, JValue::from(byte_data));
 
         assert_eq!(Ok(JavaType::Byte(byte_data as u8)), outcome);
     }
@@ -20,7 +20,7 @@ pub extern "system" fn Java_RustLibrary_nativeAssertions<'local>(
     {
         let byte_data = -4i8;
 
-        let outcome = to_rust(env, java_class, JValue::from(byte_data));
+        let outcome = to_rust(&mut env, java_class, JValue::from(byte_data));
 
         assert_eq!(
             Err(easy_jni::EasyJniError::ByteLessThanZeroNotSupported),
@@ -31,7 +31,7 @@ pub extern "system" fn Java_RustLibrary_nativeAssertions<'local>(
     {
         let short_data = 50i16;
 
-        let outcome = to_rust(env, java_class, JValue::from(short_data));
+        let outcome = to_rust(&mut env, java_class, JValue::from(short_data));
 
         assert_eq!(Ok(JavaType::Short(short_data)), outcome);
     }
@@ -39,7 +39,7 @@ pub extern "system" fn Java_RustLibrary_nativeAssertions<'local>(
     {
         let int_data = 50i32;
 
-        let outcome = to_rust(env, java_class, JValue::from(int_data));
+        let outcome = to_rust(&mut env, java_class, JValue::from(int_data));
 
         assert_eq!(Ok(JavaType::Int(int_data)), outcome);
     }
@@ -47,7 +47,7 @@ pub extern "system" fn Java_RustLibrary_nativeAssertions<'local>(
     {
         let long_data = 50i64;
 
-        let outcome = to_rust(env, java_class, JValue::from(long_data));
+        let outcome = to_rust(&mut env, java_class, JValue::from(long_data));
 
         assert_eq!(Ok(JavaType::Long(long_data)), outcome);
     }
@@ -55,7 +55,7 @@ pub extern "system" fn Java_RustLibrary_nativeAssertions<'local>(
     {
         let float_data = 504.99f32;
 
-        let outcome = to_rust(env, java_class, JValue::from(float_data));
+        let outcome = to_rust(&mut env, &java_class, JValue::from(float_data));
 
         assert_eq!(Ok(JavaType::Float(float_data)), outcome);
     }
@@ -63,7 +63,7 @@ pub extern "system" fn Java_RustLibrary_nativeAssertions<'local>(
     {
         let double_data = 504.99f64;
 
-        let outcome = to_rust(env, java_class, JValue::from(double_data));
+        let outcome = to_rust(&mut env, java_class, JValue::from(double_data));
 
         assert_eq!(Ok(JavaType::Double(double_data)), outcome);
     }
@@ -71,7 +71,7 @@ pub extern "system" fn Java_RustLibrary_nativeAssertions<'local>(
     {
         let bool_data = true;
 
-        let outcome = to_rust(env, java_class, JValue::from(bool_data));
+        let outcome = to_rust(&mut env, java_class, JValue::from(bool_data));
 
         assert_eq!(Ok(JavaType::Boolean(bool_data)), outcome);
     }
@@ -79,16 +79,19 @@ pub extern "system" fn Java_RustLibrary_nativeAssertions<'local>(
     {
         let void_data = ();
 
-        let outcome = to_rust(env, java_class, JValue::from(void_data));
+        let outcome = to_rust(&mut env, java_class, JValue::from(void_data));
 
         assert_eq!(Ok(JavaType::Void), outcome);
     }
 
-    /*{
+    {
         let string_data = String::from("MY_TEST_STRING");
+        //let to_jvalue = JavaType::new_jvalue_string(env, java_class, &string_data).unwrap();
 
-        let outcome = to_rust(env, java_class, JValue::from(&string_data));
+        let string = env.new_string(&string_data).unwrap();
+
+        let outcome = to_rust(&mut env, java_class, JValue::from(&string));
 
         assert_eq!(Ok(JavaType::String(string_data)), outcome);
-    }*/
+    }
 }
