@@ -12,4 +12,4 @@ homepage = "https://xorapps.network/libs/EasyJNI"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-jni = { git = "https://github.com/xorapps/jni-rs", features = ["invocation"] }
+jni = { git = "https://github.com/xorapps/jni-rs" }

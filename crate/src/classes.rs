@@ -1,11 +1,10 @@
+use crate::{EasyJNIResult, EasyJniError};
 use jni::{
     objects::{JClass, JObject, JValueOwned},
     strings::JNIString,
+    sys::{jarray, jint, jsize},
     JNIEnv,
 };
-
-use crate::{EasyJNIResult, EasyJniError};
-use std::collections::HashMap;
 
 /// The eight primitive types of java
 #[derive(Debug, PartialEq, PartialOrd, Clone)]
@@ -26,12 +25,20 @@ pub enum JavaType {
     Boolean(bool),
     /// a single 16-bit Unicode character, representing a wide range of characters from different languages and scripts.
     Char(char),
+    /// Returns nothing
     Void,
+    /// A String
     String(String),
 }
 
+impl Default for JavaType {
+    fn default() -> Self {
+        JavaType::Void
+    }
+}
+
 impl<'local> JavaType {
-    pub fn to_jni(
+    pub fn to_jni_jvalue(
         &self,
         env: &JNIEnv<'local>,
         _: &JClass<'local>,
@@ -52,6 +59,20 @@ impl<'local> JavaType {
         Ok(outcome)
     }
 
+    pub fn to_jni_object(
+        &self,
+        env: &JNIEnv<'local>,
+        java_class: &JClass<'local>,
+    ) -> EasyJNIResult<JObject<'local>> {
+        let class = self.java_class(env, java_class)?;
+        let signature = self.java_signature();
+        let object_value = self.to_jni_jvalue(env, java_class)?;
+
+        let object = env.new_object(class, signature, &[object_value.borrow()])?;
+
+        Ok(object)
+    }
+
     pub fn java_signature(&self) -> &str {
         match self {
             Self::Byte { .. } => "B",
@@ -66,17 +87,70 @@ impl<'local> JavaType {
             Self::String { .. } => "Ljava/lang/String;",
         }
     }
+
+    pub fn java_class_name(&self) -> &str {
+        match self {
+            Self::Byte { .. } => "java/lang/Byte",
+            Self::Short { .. } => "java/lang/Short",
+            Self::Int { .. } => "java/lang/Integer",
+            Self::Long { .. } => "java/lang/Long",
+            Self::Float { .. } => "java/lang/Float",
+            Self::Double { .. } => "java/lang/Double",
+            Self::Boolean { .. } => "java/lang/Boolean",
+            Self::Char { .. } => "java/lang/Character",
+            Self::Void { .. } => "java/lang/Void",
+            Self::String { .. } => "java/lang/String;",
+        }
+    }
+
+    pub fn java_class(
+        &'local self,
+        env: &JNIEnv<'local>,
+        _: &JClass<'local>,
+    ) -> EasyJNIResult<JClass> {
+        // Get a reference to the Integer class
+        Ok(env.find_class(self.java_class_name())?)
+    }
 }
 
-#[derive(Debug, PartialEq, PartialOrd, Clone)]
+#[derive(Debug, Default, PartialEq, PartialOrd, Clone)]
 pub struct JavaArray {
     size: usize,
-    primitive: JavaType,
+    java_type: JavaType,
+    values: Vec<JavaType>,
 }
 
-impl JavaArray {
+impl<'local> JavaArray {
+    pub fn new(java_type: JavaType) -> Self {
+        JavaArray {
+            size: 0,
+            java_type,
+            values: Vec::default(),
+        }
+    }
+
+    pub fn add_value(mut self, value: JavaType) -> Self {
+        self.values.push(value);
+
+        self
+    }
+
+    pub fn create(self, env: &JNIEnv<'local>, java_class: JClass<'local>) -> EasyJNIResult<jarray> {
+        let class = self.java_type.java_class(&env, &java_class)?;
+
+        let jarray = env.new_object_array(self.size as jsize, class, JObject::null())?;
+
+        for (i, s) in self.values.iter().enumerate() {
+            let object = s.to_jni_object(&env, &java_class)?;
+
+            env.set_object_array_element(&jarray, i as jint, object)?;
+        }
+
+        Ok(jarray.into_raw())
+    }
+
     pub fn java_signature(&self) -> EasyJNIResult<&str> {
-        let signature = match self.primitive {
+        let signature = match self.java_type {
             JavaType::Byte { .. } => "[B",
             JavaType::Short { .. } => "[S",
             JavaType::Int { .. } => "[I",
@@ -128,17 +202,10 @@ impl<'local> Class<'local> {
                 &object,
                 field_name,
                 value.java_signature(),
-                value.to_jni(&env, &java_class)?.borrow(),
+                value.to_jni_jvalue(&env, &java_class)?.borrow(),
             )?;
         }
 
         Ok(object)
     }
-}
-
-#[derive(Debug, Clone)]
-pub struct JavaCollection(HashMap<JavaType, JavaType>);
-
-fn foo<'local>(mut env: JNIEnv<'local>, java_class: JClass<'local>) {
-    let foo = Class::new().create(&mut env, java_class);
 }
