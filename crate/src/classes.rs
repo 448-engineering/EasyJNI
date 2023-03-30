@@ -36,7 +36,7 @@ impl JavaType {
             Self::Boolean { .. } => "Z",
             Self::Char { .. } => "C",
             Self::Void { .. } => "V",
-            Self::String { .. } => "Ljava/lang/String;",
+            Self::String { .. } => "java/lang/String",
         }
     }
 }
@@ -59,7 +59,7 @@ impl JavaArray {
             JavaType::Boolean { .. } => "[Z",
             JavaType::Char { .. } => "[C",
             JavaType::Void => return Err(EasyJniError::ArrayOfVoidNotAllowed),
-            JavaType::String { .. } => "[Ljava/lang/String;",
+            JavaType::String { .. } => "[java/lang/String",
         };
 
         Ok(signature)
