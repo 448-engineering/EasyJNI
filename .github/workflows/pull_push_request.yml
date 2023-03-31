@@ -1,0 +1,48 @@
+name: pull_push_workflow
+on: [pull_request, push]
+jobs:
+
+  kotlin-compiler:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update packages
+        run: sudo apt update
+      - name: Installing JDK
+        run: sudo apt install default-jdk
+      - name: Installing SDKMAN
+        run: curl -s https://get.sdkman.io | bash
+      - name: Launching SDKMAN
+        run: source "$HOME/.sdkman/bin/sdkman-init.sh"
+      - name: Downloading kotlin compiler
+        run: sdk install kotlin -y
+      - name: Message
+        run: echo "kotlin complier installation complete...."
+
+  make-install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install make
+        run: sudo apt install make -y
+      - name: Checking make version
+        run: make --version
+      - name: Checking the make directory
+        run: ls /usr/bin/make
+      - name: Message
+        run: echo "makefile installation complete...."
+
+  change-dir:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Changing directory
+        run: cd tests
+      - name: Present working directory
+        run: pwd
+
+  run-make:
+    runs-on: ubuntu-latest
+    needs: make-install
+    steps:
+      - name: Executing make
+        run: make
+      - name: Message
+        run: echo "makefile execution complete...."
