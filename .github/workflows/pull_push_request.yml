@@ -28,9 +28,10 @@ jobs:
 
   change-dir:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./tests
     steps:
-      - name: Changing directory
-        run: cd tests
       - name: Present working directory
         run: pwd
 
@@ -39,6 +40,6 @@ jobs:
     needs: make-install
     steps:
       - name: Executing make
-        run: make
+        run: make pwd
       - name: Message
         run: echo "makefile execution complete...."
