@@ -26,16 +26,6 @@ jobs:
       - name: Message
         run: echo "makefile installation complete...."
 
-#  change-dir:
-#    runs-on: ubuntu-latest
-#    defaults:
-#      run:
-#        working-directory: tests
-#    steps:
-#      - name: Present working directory
-#        run: pwd
-
-
   run-make:
     runs-on: ubuntu-latest
     needs: make-install
@@ -43,17 +33,9 @@ jobs:
       run:
         working-directory: tests
     steps:
-      - name: Current
-        run: echo ${{ github.repository }}
       - name: Checkout repo
         uses: actions/checkout@v3
-        with:
-          repository: harshit82/EasyJNI
-      - name: List add directory
-        run: ls
-      - name: Change-dir
-        run: cd tests
       - name: Executing make
-        run: make tests
+        run: make run
       - name: Message
         run: echo "makefile execution complete...."
