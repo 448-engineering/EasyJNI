@@ -26,14 +26,14 @@ jobs:
       - name: Message
         run: echo "makefile installation complete...."
 
-  change-dir:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: tests
-    steps:
-      - name: Present working directory
-        run: pwd
+#  change-dir:
+#    runs-on: ubuntu-latest
+#    defaults:
+#      run:
+#        working-directory: tests
+#    steps:
+#      - name: Present working directory
+#        run: pwd
 
   run-make:
     runs-on: ubuntu-latest
@@ -43,7 +43,11 @@ jobs:
         working-directory: tests
     steps:
       - name: Checkout repo
-        run: actions/checkout@v2
+        run: actions/checkout@v3
+      - name: List add directory
+        run: ls
+      - name: Change-dir
+        run: cd tests
       - name: Executing make
         run: make tests
       - name: Message
