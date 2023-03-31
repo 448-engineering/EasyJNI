@@ -10,7 +10,7 @@ jobs:
       - name: Installing JDK
         run: sudo apt install default-jdk
       - name: Downloading kotlin compiler
-        run: sdk install kotlin -y
+        run: sudo snap install --classic kotlin
       - name: Message
         run: echo "kotlin complier installation complete...."
 
@@ -38,6 +38,9 @@ jobs:
   run-make:
     runs-on: ubuntu-latest
     needs: make-install
+    defaults:
+      run:
+        working-directory: tests
     steps:
       - name: Executing make
         run: make pwd
