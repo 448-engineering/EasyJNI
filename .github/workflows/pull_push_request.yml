@@ -42,7 +42,9 @@ jobs:
       run:
         working-directory: tests
     steps:
+      - name: Checkout repo
+        run: actions/checkout@v2
       - name: Executing make
-        run: make pwd
+        run: make tests
       - name: Message
         run: echo "makefile execution complete...."
