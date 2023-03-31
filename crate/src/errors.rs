@@ -8,6 +8,8 @@ pub enum EasyJniError {
     UnsupportedJavaType,
     /// Any Java byte (i8) value less than 0 will give a hard error since Rust byte is unsigned.
     ByteLessThanZeroNotSupported,
+    /// The `JavaType` does not match the required type
+    JavaTypeMismatch,
     FromJniCrate(String),
 }
 

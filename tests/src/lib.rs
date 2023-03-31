@@ -1,6 +1,8 @@
-use easy_jni::{to_rust, JavaType};
+use easy_jni::{to_rust, Class, JavaArray, JavaType, JavaTypeSignature};
 use jni::{
-    objects::{JClass, JValue},
+    objects::{JClass, JObject, JValue, JValueOwned},
+    strings::JNIString,
+    sys::{jarray, jint, jobject},
     JNIEnv,
 };
 
@@ -94,4 +96,87 @@ pub extern "system" fn Java_RustLibrary_nativeAssertions<'local>(
 
         assert_eq!(Ok(JavaType::String(string_data)), outcome);
     }
+}
+
+#[allow(non_snake_case)]
+#[no_mangle]
+pub extern "system" fn Java_RustLibrary_rustyClass<'local>(
+    // Java environment.
+    mut env: JNIEnv<'local>,
+    // Static class which owns this method.
+    java_class: JClass<'local>,
+) -> jobject {
+    let class_name = "RustyClass";
+    let field_name = "message";
+    let field_contents = "RUSTY_JNI_CLASS";
+
+    let object = Class::new()
+        .add_name(class_name)
+        .create(&mut env, &java_class)
+        .unwrap();
+
+    let field_signature = JavaTypeSignature::String.java_class_name();
+
+    let field_name = JNIString::from(field_name);
+    let message = env.new_string(field_contents).unwrap();
+
+    env.set_field(
+        &object,
+        field_name,
+        field_signature,
+        //JValue::from("RUSTY_JNI_CLASS".to_owned()),
+        JValueOwned::Object(JObject::from(message)).borrow(),
+    )
+    .unwrap();
+
+    // Return the new object as a jobject.
+    object.into_raw()
+}
+
+#[no_mangle]
+pub extern "system" fn Java_RustLibrary_rustyArray<'local>(
+    mut env: JNIEnv<'local>,
+    java_class: &'local JClass<'local>,
+) -> jarray {
+    let create_array =
+        JavaArray::create(&mut env, &java_class, JavaTypeSignature::String, 3).unwrap();
+
+    let strings = ["ONE", "TWO", "THREE"];
+    for (i, value) in strings.iter().enumerate() {
+        let jstring = env.new_string(value).unwrap();
+        env.set_object_array_element(&create_array, i as jint, &jstring)
+            .unwrap();
+    }
+
+    /*for (i, s) in new_array.values().iter().enumerate() {
+        let object = s.to_jni_object(&mut env, &java_class).unwrap();
+
+        env.set_object_array_element(&create_array, i as jint, object)
+            .unwrap();
+    }*/
+
+    create_array.as_raw()
+}
+
+#[no_mangle]
+pub extern "system" fn Java_RustLibrary_rustyArrayInts<'local>(
+    mut env: JNIEnv<'local>,
+    java_class: &'local JClass<'local>,
+) -> jarray {
+    let create_array = JavaArray::create(&mut env, &java_class, JavaTypeSignature::Int, 3).unwrap();
+
+    let strings = [0i32, 1, 2];
+    for (i, value) in strings.iter().enumerate() {
+        let integer_class = env
+            .find_class("java/lang/Integer")
+            .expect("Failed to find java/lang/Integer");
+
+        let java_value = env
+            .new_object(integer_class, "(I)V", &[JValue::Int(*value)])
+            .unwrap();
+        env.set_object_array_element(&create_array, i as jint, JObject::from(java_value))
+            .unwrap();
+    }
+
+    create_array.as_raw()
 }

@@ -6,3 +6,6 @@ pub use errors::*;
 
 mod conversion;
 pub use conversion::*;
+
+mod java_types;
+pub use java_types::*;
