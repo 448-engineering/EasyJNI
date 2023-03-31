@@ -1,3 +1,5 @@
+# This is a CI workflow file created to execute on push and pull requests
+
 name: pull_push_workflow
 on: [pull_request, push]
 jobs:
@@ -29,9 +31,6 @@ jobs:
   run-make:
     runs-on: ubuntu-latest
     needs: make-install
-    defaults:
-      run:
-        working-directory: tests
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
