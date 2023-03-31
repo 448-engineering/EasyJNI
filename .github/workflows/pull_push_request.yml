@@ -9,12 +9,8 @@ jobs:
         run: sudo apt update
       - name: Installing JDK
         run: sudo apt install default-jdk
-      - name: Installing SDKMAN
-        run: curl -s https://get.sdkman.io | bash
-      - name: Launching SDKMAN
-        run: source "$HOME/.sdkman/bin/sdkman-init.sh"
       - name: Downloading kotlin compiler
-        run: sdk install kotlin
+        run: sudo snap install --classic kotlin
       - name: Message
         run: echo "kotlin complier installation complete...."
 
