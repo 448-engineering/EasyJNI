@@ -40,6 +40,6 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
       - name: Executing make
-        run: make run
+        run: make
       - name: Message
         run: echo "makefile execution complete...."
