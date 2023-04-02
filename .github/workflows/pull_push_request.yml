@@ -12,8 +12,9 @@ jobs:
       - name: Installing JDK
         run: sudo apt install openjdk-11-jdk
       - name: Installing SDKMAN
-        run: curl -s "https://get.sdkman.io" | bash 
-            && source "/home/runner/.sdkman/bin/sdkman-init.sh"
+        run: | 
+            curl -s "https://get.sdkman.io" | bash 
+            source "/home/runner/.sdkman/bin/sdkman-init.sh"
       - name: Checking SDKMAN version
         run: sdk version
       - name: Installing kotlin compiler
