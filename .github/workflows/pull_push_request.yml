@@ -11,13 +11,12 @@ jobs:
         run: sudo apt update
       - name: Installing JDK
         run: sudo apt install openjdk-11-jdk
-      - name: Installing SDKMAN
+      - name: Installing SDKMAN and kotlin complier
         run: | 
             curl -s "https://get.sdkman.io" | bash 
             source "/home/runner/.sdkman/bin/sdkman-init.sh"
             sdk help
-      - name: Installing kotlin compiler
-        run: sdk install kotlin
+            sdk install kotlin
       - name: Message
         run: echo "kotlin complier installation complete...."
 
