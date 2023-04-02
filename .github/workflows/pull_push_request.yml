@@ -15,8 +15,7 @@ jobs:
         run: | 
             curl -s "https://get.sdkman.io" | bash 
             source "/home/runner/.sdkman/bin/sdkman-init.sh"
-      - name: Checking SDKMAN version
-        run: sdk version
+            sdk help
       - name: Installing kotlin compiler
         run: sdk install kotlin
       - name: Message
