@@ -16,6 +16,7 @@ jobs:
             curl -s "https://get.sdkman.io" | bash 
             source "/home/runner/.sdkman/bin/sdkman-init.sh"
             sdk help
+            sdk version
             sdk install kotlin
       - name: Message
         run: echo "kotlin complier installation complete...."
