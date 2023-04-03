@@ -10,4 +10,4 @@ pub use conversion::*;
 mod java_types;
 pub use java_types::*;
 
-pub use jni::*;
+pub use jni;
