@@ -72,23 +72,6 @@ impl<'local> JavaArray {
 
         Ok(jarray.into_raw())
     }
-
-    pub fn java_signature(&self) -> EasyJNIResult<&str> {
-        let signature = match self.java_type {
-            JavaTypeSignature::Byte => "[B",
-            JavaTypeSignature::Short => "[S",
-            JavaTypeSignature::Int => "[I",
-            JavaTypeSignature::Long => "[J",
-            JavaTypeSignature::Float => "[F",
-            JavaTypeSignature::Double => "[D",
-            JavaTypeSignature::Boolean => "[Z",
-            JavaTypeSignature::Char => "[C",
-            JavaTypeSignature::Void => return Err(EasyJniError::ArrayOfVoidNotAllowed),
-            JavaTypeSignature::String => "[Ljava/lang/String;",
-        };
-
-        Ok(signature)
-    }
 }
 
 #[derive(Debug, PartialEq, PartialOrd, Clone)]

@@ -177,6 +177,23 @@ impl JavaTypeSignature {
         }
     }
 
+    pub fn java_class_name_array(&self) -> EasyJNIResult<&str> {
+        let class_name = match self {
+            Self::Byte => "[B",
+            Self::Short => "[S",
+            Self::Int => "[I",
+            Self::Long => "[J",
+            Self::Float => "[F",
+            Self::Double => "[D",
+            Self::Boolean => "[Z",
+            Self::Char => "[C",
+            Self::Void => return Err(EasyJniError::ArrayOfVoidNotAllowed),
+            Self::String => "[Ljava/lang/String;",
+        };
+
+        Ok(class_name)
+    }
+
     pub fn to_jni_object<'local>(
         &self,
         env: &mut JNIEnv<'local>,
