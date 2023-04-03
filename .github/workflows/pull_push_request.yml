@@ -1,0 +1,48 @@
+# This is a CI workflow file created to execute on push and pull requests
+
+name: pull_push_workflow
+on: [pull_request, push]
+jobs:
+
+  kotlin-compiler:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Update packages
+        run: sudo apt update
+      - name: Installing JDK
+        run: sudo apt install openjdk-11-jdk
+      - name: Installing SDKMAN and kotlin complier
+        run: | 
+            curl -s "https://get.sdkman.io" | bash 
+            source "/home/runner/.sdkman/bin/sdkman-init.sh"
+            sdk help
+            sdk version
+            sdk install kotlin
+      - name: Message
+        run: echo "kotlin complier installation complete...."
+
+  make-install:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Install make
+        run: sudo apt install make -y
+      - name: Checking make version
+        run: make --version
+      - name: Checking the make directory
+        run: ls /usr/bin/make
+      - name: Message
+        run: echo "makefile installation complete...."
+
+  run-make:
+    runs-on: ubuntu-22.04
+    needs: make-install
+    defaults:
+      run:
+        working-directory: tests
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Executing make
+        run: make
+      - name: Message
+        run: echo "makefile execution complete...."
