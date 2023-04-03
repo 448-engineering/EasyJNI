@@ -48,7 +48,7 @@ impl<'local> JavaArray {
         java_type: JavaTypeSignature,
         size: usize,
     ) -> EasyJNIResult<JObjectArray<'local>> {
-        let class = java_type.java_class_name();
+        let class = java_type.java_class_name_array();
 
         let jarray = env.new_object_array(size as jsize, class, JObject::null())?;
 
@@ -60,7 +60,7 @@ impl<'local> JavaArray {
         env: &mut JNIEnv<'local>,
         java_class: &'local JClass<'local>,
     ) -> EasyJNIResult<jarray> {
-        let class = self.java_type.java_class_name();
+        let class = self.java_type.java_class_name_array();
 
         let jarray = env.new_object_array(self.size as jsize, class, JObject::null())?;
 
