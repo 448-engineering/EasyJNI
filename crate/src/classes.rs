@@ -44,7 +44,7 @@ impl<'local> JavaArray {
 
     pub fn create(
         env: &mut JNIEnv<'local>,
-        _: &'local JClass<'local>,
+        _: &JClass<'local>,
         java_type: JavaTypeSignature,
         size: usize,
     ) -> EasyJNIResult<JObjectArray<'local>> {
