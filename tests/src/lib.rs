@@ -1,9 +1,11 @@
-use easy_jni::{to_rust, Class, JavaArray, JavaType, JavaTypeSignature};
-use jni::{
-    objects::{JClass, JObject, JValue, JValueOwned},
-    strings::JNIString,
-    sys::{jarray, jint, jobject},
-    JNIEnv,
+use easy_jni::{
+    jni::{
+        objects::{JClass, JObject, JString, JValue, JValueOwned},
+        strings::JNIString,
+        sys::{jarray, jint, jobject, jstring},
+        JNIEnv,
+    },
+    to_rust, Class, JavaArray, JavaType, JavaTypeSignature,
 };
 
 #[no_mangle]
@@ -101,9 +103,7 @@ pub extern "system" fn Java_RustLibrary_nativeAssertions<'local>(
 #[allow(non_snake_case)]
 #[no_mangle]
 pub extern "system" fn Java_RustLibrary_rustyClass<'local>(
-    // Java environment.
     mut env: JNIEnv<'local>,
-    // Static class which owns this method.
     java_class: JClass<'local>,
 ) -> jobject {
     let class_name = "RustyClass";
@@ -115,7 +115,7 @@ pub extern "system" fn Java_RustLibrary_rustyClass<'local>(
         .create(&mut env, &java_class)
         .unwrap();
 
-    let field_signature = JavaTypeSignature::String.java_class_name();
+    let field_signature = JavaTypeSignature::String.bytecode_signature();
 
     let field_name = JNIString::from(field_name);
     let message = env.new_string(field_contents).unwrap();
@@ -124,12 +124,10 @@ pub extern "system" fn Java_RustLibrary_rustyClass<'local>(
         &object,
         field_name,
         field_signature,
-        //JValue::from("RUSTY_JNI_CLASS".to_owned()),
         JValueOwned::Object(JObject::from(message)).borrow(),
     )
     .unwrap();
 
-    // Return the new object as a jobject.
     object.into_raw()
 }
 
@@ -147,13 +145,6 @@ pub extern "system" fn Java_RustLibrary_rustyArray<'local>(
         env.set_object_array_element(&create_array, i as jint, &jstring)
             .unwrap();
     }
-
-    /*for (i, s) in new_array.values().iter().enumerate() {
-        let object = s.to_jni_object(&mut env, &java_class).unwrap();
-
-        env.set_object_array_element(&create_array, i as jint, object)
-            .unwrap();
-    }*/
 
     create_array.as_raw()
 }
@@ -179,4 +170,84 @@ pub extern "system" fn Java_RustLibrary_rustyArrayInts<'local>(
     }
 
     create_array.as_raw()
+}
+
+#[allow(non_snake_case)]
+#[no_mangle]
+pub extern "system" fn Java_RustLibrary_resultOfArrayString<'local>(
+    mut env: JNIEnv<'local>,
+    java_class: JClass<'local>,
+) -> jobject {
+    let class_name = "ResultOfArrayString";
+    let success_field_name = "successData";
+    let failure_field_name = "failureData";
+
+    let success_array =
+        JavaArray::create(&mut env, &java_class, JavaTypeSignature::String, 3).unwrap();
+
+    {
+        let strings = ["ONE", "TWO", "THREE"];
+        for (i, value) in strings.iter().enumerate() {
+            let jstring = env.new_string(value).unwrap();
+            env.set_object_array_element(&success_array, i as jint, &jstring)
+                .unwrap();
+        }
+    }
+    let failure_array =
+        JavaArray::create(&mut env, &java_class, JavaTypeSignature::String, 0).unwrap();
+
+    let object = Class::new()
+        .add_name(class_name)
+        .create(&mut env, &java_class)
+        .unwrap();
+    let field_signature = JavaTypeSignature::String.java_class_name_array().unwrap();
+
+    env.set_field(
+        &object,
+        success_field_name,
+        &field_signature,
+        JValueOwned::Object(JObject::from(success_array)).borrow(),
+    )
+    .unwrap();
+
+    env.set_field(
+        &object,
+        failure_field_name,
+        &field_signature,
+        JValueOwned::Object(JObject::from(failure_array)).borrow(),
+    )
+    .unwrap();
+
+    object.into_raw()
+}
+
+#[allow(non_snake_case)]
+#[no_mangle]
+pub extern "system" fn Java_RustLibrary_sillyDebugger<'local>(
+    mut env: JNIEnv<'local>,
+    java_class: JClass<'local>,
+    _input: JString<'local>,
+) -> jstring {
+    let class_name = "ResultOfArrayString";
+    let success_field_name = "successData";
+
+    let success_array =
+        JavaArray::create(&mut env, &java_class, JavaTypeSignature::String, 3).unwrap();
+
+    let object = Class::new()
+        .add_name(class_name)
+        .create(&mut env, &java_class)
+        .unwrap();
+
+    let field_signature = JavaTypeSignature::String.java_class_name_array().unwrap();
+
+    match env.set_field(
+        &object,
+        success_field_name,
+        field_signature,
+        JValueOwned::Object(JObject::from(success_array)).borrow(),
+    ) {
+        Ok(_) => env.new_string("DEBUG_TRUE").unwrap().into_raw(),
+        Err(error) => env.new_string(error.to_string()).unwrap().into_raw(),
+    }
 }

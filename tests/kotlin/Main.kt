@@ -40,5 +40,24 @@ fun main() {
         }
 
     }
+
+    sillyDebugger()
+
+    val myresult  = resultOfArrayString()
+
+    if (myresult.failureData.isNotEmpty()) {        
+        throw RuntimeException("`failureData` field is supposed to be empty for test to succeed")
+    }
+
+    for ((index, value) in myresult.successData.withIndex()) {
+
+        val valueAtIndex = testArray[index]
+
+        if (value != valueAtIndex) {
+            throw RuntimeException("\nString MISMATCH\nLEFT: $value, \nRIGHT:$valueAtIndex")
+        }
+
+    }
+    
     
 }

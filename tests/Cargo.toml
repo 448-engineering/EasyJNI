@@ -12,5 +12,4 @@ name = "rust_kotlin"
 crate-type = ["cdylib"]
 
 [dependencies]
-jni = { git = "https://github.com/xorapps/jni-rs" }
 easy-jni = { path = "../crate" }

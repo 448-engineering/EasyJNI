@@ -6,6 +6,10 @@ external fun rustyClass(): RustyClass
 
 external fun rustyArray(): Array<String>
 external fun rustyArrayInts(): Array<Int>
+external fun resultOfArrayString(): ResultOfArrayString
+
+external fun sillyDebugger(): String
+
 
 class RustyClass {
     private val message = "FROM_KOTLIN"
@@ -13,4 +17,10 @@ class RustyClass {
     fun getMessage(): String {
         return message
     }
+}
+
+
+class ResultOfArrayString {
+    val successData: Array<String> = emptyArray()
+    val failureData: Array<String> = emptyArray()
 }
