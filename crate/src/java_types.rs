@@ -173,25 +173,21 @@ impl JavaTypeSignature {
             Self::Boolean => "java/lang/Boolean",
             Self::Char => "java/lang/Character",
             Self::Void => "java/lang/Void",
-            Self::String => "Ljava/lang/String;",
+            Self::String => "java/lang/String",
         }
     }
 
-    pub fn java_class_name_array(&self) -> EasyJNIResult<&str> {
+    pub fn java_class_name_array(&self) -> EasyJNIResult<String> {
         let class_name = match self {
-            Self::Byte => "[B",
-            Self::Short => "[S",
-            Self::Int => "[I",
-            Self::Long => "[J",
-            Self::Float => "[F",
-            Self::Double => "[D",
-            Self::Boolean => "[Z",
-            Self::Char => "[C",
             Self::Void => return Err(EasyJniError::ArrayOfVoidNotAllowed),
-            Self::String => "[Ljava/lang/String;",
+            _ => "[".to_owned() + self.bytecode_signature().as_str(),
         };
 
         Ok(class_name)
+    }
+
+    pub fn bytecode_signature(&self) -> String {
+        "L".to_owned() + self.java_class_name() + ";"
     }
 
     pub fn to_jni_object<'local>(
