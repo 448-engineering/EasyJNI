@@ -1,0 +1,17 @@
+[tasks.default]
+clear = true
+dependencies = ["check"]
+
+[tasks.jar_build]
+script = '''
+echo -------- BUILD SHARED LIBRARY ---------
+java -Djava.library.path=../target/release/ -jar KotlinRust.jar
+'''
+dependencies = ["kotlin_build"]
+
+
+[tasks.kotlin_build]
+script = '''
+echo -------- COMPILE KOTLIN LIBRARY ---------
+kotlinc kotlin/Main.kt kotlin/Rust.kt -include-runtime -d KotlinRust.jar
+'''

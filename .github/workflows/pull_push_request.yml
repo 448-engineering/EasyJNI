@@ -24,14 +24,10 @@ jobs:
   make-install:
     runs-on: ubuntu-22.04
     steps:
-      - name: Install make
-        run: sudo apt install make -y
-      - name: Checking make version
-        run: make --version
-      - name: Checking the make directory
-        run: ls /usr/bin/make
+      - name: Install cargo-make
+        run: cargo install cargo-make
       - name: Message
-        run: echo "makefile installation complete...."
+        run: echo "cargo-make installation complete...."
 
   run-make:
     runs-on: ubuntu-22.04
@@ -43,6 +39,6 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
       - name: Executing make
-        run: make
+        run: cargo make jar_build
       - name: Message
-        run: echo "makefile execution complete...."
+        run: echo "execution complete...."
