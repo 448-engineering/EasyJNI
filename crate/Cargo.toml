@@ -1,12 +1,14 @@
 [package]
 name = "easy-jni"
 version = "0.3.0"
-authors = ["XOR·APPS <developers@xorapps.network>"]
+authors = ["448 ENGINEERING Developers <superuser@448.africa>"]
 edition = "2021"
 description = "Making Rust JNI calls easy"
 license = "Apache-2.0 OR MIT"
 repository = "https://github.com/448-ENGINEERING/EasyJNI"
-homepage = "https://github.com/libs/EasyJNI"
+homepage = "https://github.com/448-ENGINEERING/EasyJNI"
+categories = ["development-tools::ffi"]
+keywords = ["kotlin", "java", "android"]
 
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
