@@ -58,6 +58,18 @@ fun main() {
         }
 
     }
-    
+
+    val redDirOutcome = dirReaderWithResult()    
+
+
+    if (redDirOutcome.failureData.isNotEmpty()) {        
+        throw RuntimeException("`failureData` field is supposed to be empty for test to succeed")
+    }
+
+    for (value in redDirOutcome.successData) {
+
+        print(value)
+
+    }
     
 }

@@ -12,4 +12,10 @@ name = "rust_kotlin"
 crate-type = ["cdylib"]
 
 [dependencies]
-easy-jni = { path = "../crate" }
+easy-jni = { path = "../crate", features = [
+    "simple_types",
+    "complex_types",
+    "conversion",
+] }
+futures-lite = "1.13.0"
+smol = "1.3.0"

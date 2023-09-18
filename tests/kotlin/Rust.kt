@@ -24,3 +24,10 @@ class ResultOfArrayString {
     val successData: Array<String> = emptyArray()
     val failureData: Array<String> = emptyArray()
 }
+
+external fun dirReaderWithResult(): DirReaderWithResult
+
+class DirReaderWithResult {
+    val successData: Array<String> = emptyArray()
+    val failureData: Array<String> = emptyArray()
+}

@@ -75,34 +75,20 @@ impl<'local> JavaArray {
 }
 
 #[derive(Debug, PartialEq, PartialOrd, Clone)]
-pub struct Class {
-    name: String,
+pub struct Class<'local> {
+    name: &'local str,
 }
 
-impl<'local> Default for Class {
-    fn default() -> Self {
-        Class::new()
-    }
-}
-
-impl Class {
-    pub fn new() -> Class {
-        Class {
-            name: "UNINITIALIZED_CLASS_NAME".to_owned(),
-        }
+impl<'local> Class<'local> {
+    pub fn new(name: &'local str) -> Class {
+        Class { name }
     }
 
-    pub fn name(&self) -> &str {
-        self.name.as_str()
+    pub fn name(&self) -> &'local str {
+        self.name
     }
 
-    pub fn add_name(mut self, class_name: &str) -> Self {
-        self.name = class_name.to_owned();
-
-        self
-    }
-
-    pub fn create<'local>(
+    pub fn create(
         &self,
         env: &mut JNIEnv<'local>,
         _java_class: &JClass<'local>,
@@ -114,7 +100,7 @@ impl Class {
         Ok(object)
     }
 
-    pub fn create_and_build<'local>(
+    pub fn create_and_build(
         &'local self,
         env: &mut JNIEnv<'local>,
         java_class: &'local JClass<'local>,
@@ -136,23 +122,10 @@ impl Class {
             field_value.borrow(),
         )?;
 
-        /*for (name, value) in &self.fields {
-            let field_name = JNIString::from(name);
-            let field_value = value.to_jni_object(env, &java_class)?;
-            let field_value = JValueOwned::Object(field_value);
-
-            env.set_field(
-                &object,
-                field_name,
-                value.java_class_name(),
-                field_value.borrow(),
-            )?;
-        }*/
-
         Ok(object)
     }
 
-    pub fn find<'local>(
+    pub fn find(
         self,
         env: &mut JNIEnv<'local>,
         _: JClass<'local>,

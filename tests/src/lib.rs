@@ -8,6 +8,9 @@ use easy_jni::{
     to_rust, Class, JavaArray, JavaType, JavaTypeSignature,
 };
 
+mod files;
+pub use files::*;
+
 #[no_mangle]
 pub extern "system" fn Java_RustLibrary_nativeAssertions<'local>(
     mut env: JNIEnv<'local>,
@@ -110,8 +113,7 @@ pub extern "system" fn Java_RustLibrary_rustyClass<'local>(
     let field_name = "message";
     let field_contents = "RUSTY_JNI_CLASS";
 
-    let object = Class::new()
-        .add_name(class_name)
+    let object = Class::new(class_name)
         .create(&mut env, &java_class)
         .unwrap();
 
@@ -196,8 +198,7 @@ pub extern "system" fn Java_RustLibrary_resultOfArrayString<'local>(
     let failure_array =
         JavaArray::create(&mut env, &java_class, JavaTypeSignature::String, 0).unwrap();
 
-    let object = Class::new()
-        .add_name(class_name)
+    let object = Class::new(class_name)
         .create(&mut env, &java_class)
         .unwrap();
     let field_signature = JavaTypeSignature::String.java_class_name_array().unwrap();
@@ -234,8 +235,7 @@ pub extern "system" fn Java_RustLibrary_sillyDebugger<'local>(
     let success_array =
         JavaArray::create(&mut env, &java_class, JavaTypeSignature::String, 3).unwrap();
 
-    let object = Class::new()
-        .add_name(class_name)
+    let object = Class::new(class_name)
         .create(&mut env, &java_class)
         .unwrap();
 

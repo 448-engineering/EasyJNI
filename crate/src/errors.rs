@@ -11,6 +11,8 @@ pub enum EasyJniError {
     /// The `JavaType` does not match the required type
     JavaTypeMismatch,
     FromJniCrate(String),
+    /// Tried to create a class without adding the class name first
+    ClassNameRequiredToCreateClass,
 }
 
 impl From<JniError> for EasyJniError {

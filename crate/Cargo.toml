@@ -1,15 +1,23 @@
 [package]
 name = "easy-jni"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["XOR·APPS <developers@xorapps.network>"]
 edition = "2021"
 description = "Making Rust JNI calls easy"
 license = "Apache-2.0 OR MIT"
-repository = "https://github.com/xorapps/EasyJNI"
-homepage = "https://xorapps.network/libs/EasyJNI"
+repository = "https://github.com/448-ENGINEERING/EasyJNI"
+homepage = "https://github.com/libs/EasyJNI"
 
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-jni = { git = "https://github.com/xorapps/jni-rs" }
+jni = { version = "0.21.1", features = ["invocation"] }
+
+
+[features]
+default = ["simple_types"]
+simple_types = []
+complex_types = ["simple_types"]
+conversion = ["simple_types"]
+full = ["simple_types", "complex_types", "conversion"]

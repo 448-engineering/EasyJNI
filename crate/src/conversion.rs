@@ -35,10 +35,9 @@ pub fn to_rust<'local>(
         }
         JValueGen::Void => JavaType::Void,
         JValueGen::Object(value) => {
-            let JObject { internal, lifetime } = *value;
-            let destructured_value = JObject { internal, lifetime };
+            let value = unsafe { JObject::from_raw(value.as_raw()) };
 
-            if let Ok(inner_value) = JString::try_from(destructured_value) {
+            if let Ok(inner_value) = JString::try_from(value) {
                 let string_outcome = env.get_string(&inner_value)?.into();
 
                 return Ok(JavaType::String(string_outcome));
