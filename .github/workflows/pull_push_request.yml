@@ -38,7 +38,9 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+      - name: Add cargo bin path
+        run: source "$HOME/.cargo/env"
       - name: Executing make
-        run: bash "$HOME/.cargo/cargo-make make jar_build"
+        run: cargo make jar_build
       - name: Message
         run: echo "execution complete...."
