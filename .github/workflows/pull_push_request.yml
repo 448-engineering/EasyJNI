@@ -25,7 +25,8 @@ jobs:
   make-install:
     runs-on: ubuntu-22.04
     steps:
-      - run: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+      - run: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o install.sh
+      - run: sudo sh install.sh -y
       - run: source "$HOME/.cargo/env"
       - name: Install cargo-make
         run: cargo install cargo-make
